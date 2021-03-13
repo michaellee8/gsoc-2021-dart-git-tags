@@ -12,8 +12,7 @@ void main(List<String> arguments) async {
         '--depth',
         '1',
         '--filter=tree:0',
-        // Prevent using sparse for old git versions
-        // '--sparse',
+        '--sparse',
         '--no-checkout',
         repoUrl,
         tempDir,
