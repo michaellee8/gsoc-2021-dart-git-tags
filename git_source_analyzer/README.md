@@ -19,7 +19,7 @@ dart main.dart <url to git repo> <path to package>
 ```
 
 ```bash
-# Simple example, still took 274 seconds on 53 tags
+# Simple example, still took 277 seconds on 53 tags
 dart main.dart https://github.com/rrousselGit/provider /
 
 # Heavy load test, would take quite a lot of time to complete
@@ -29,6 +29,6 @@ dart main.dart https://github.com/flutter/plugins packages/camera/camera
 ## Evaluation
 
 Currently the performance is not quite acceptable, in a Google Cloud Shell environment, it took about 8 seconds for
-initialization and extra 3 seconds for each tag it has to fetch. There are different techniques to optimize this, for
+initialization and extra 5 seconds for each tag it has to fetch. There are different techniques to optimize this, for
 example to fetch multiple instances of such repo concurrently and to limit the number of tags required to process by
 doing pattern matching on tags to be scanned.
