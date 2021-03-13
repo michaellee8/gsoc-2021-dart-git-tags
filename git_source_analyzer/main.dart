@@ -28,7 +28,12 @@ void main(List<String> arguments) async {
   var sparseInitResult = await Process.run('git', ['sparse-checkout', 'init'],
       workingDirectory: tempDir);
   var sparseSetResult = await Process.run(
-      'git', ['sparse-checkout', 'set', packagePath + '/pubspec.yaml'],
+      'git',
+      [
+        'sparse-checkout',
+        'set',
+        packagePath == '/' ? 'pubspec.yaml' : packagePath + '/pubspec.yaml'
+      ],
       workingDirectory: tempDir);
 
   var pubspecs = <List<String>>[];

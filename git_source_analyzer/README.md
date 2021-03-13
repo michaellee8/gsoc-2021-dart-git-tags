@@ -8,6 +8,10 @@ A rudimentary sample demonstrating the git partial clone + sparse checkout metho
 4. loop through all tags to scrape all applicable pubspec.yaml
 5. all found version of the discovered package.
 
+## System requirement
+
+`git clone --sparse` requires at least git 2.25.0, below benchmarks are running in git 2.30.2
+
 ## Usage
 
 ```bash
@@ -23,7 +27,8 @@ dart main.dart https://github.com/flutter/plugins packages/camera/camera
 ```
 
 ## Evaluation
-Currently the performance is not quite acceptable, in a Google Cloud Shell environment, 
-it took about 5 seconds for initialization and extra 5 seconds for each tag it has to fetch. There 
-are different techniques to optimize this, for example to fetch multiple instances of such repo concurrently 
-and to limit the number of tags required to process by doing pattern matching on tags to be scanned.
+
+Currently the performance is not quite acceptable, in a Google Cloud Shell environment, it took about 8 seconds for
+initialization and extra 3 seconds for each tag it has to fetch. There are different techniques to optimize this, for
+example to fetch multiple instances of such repo concurrently and to limit the number of tags required to process by
+doing pattern matching on tags to be scanned.
