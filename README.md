@@ -5,3 +5,4 @@ https://github.com/dart-lang/sdk/wiki/Dart-GSoC-2021-Project-Ideas#idea-extends-
 
 ## Interesting links
 https://docs.npmjs.com/cli/v7/configuring-npm/package-json#git-urls-as-dependencies
+https://github.com/npm/npm/issues/3328
