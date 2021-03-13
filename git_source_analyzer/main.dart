@@ -2,19 +2,25 @@ import 'dart:io';
 
 void main(List<String> arguments) async {
   var tempDir = (await Directory.systemTemp.createTemp()).path;
-  var repoUrl = arguments[1];
-  var packagePath = arguments[2];
-  var cloneResult = await Process.run('git', [
-    'clone',
-    '--depth',
-    '1',
-    '--filter=tree:0',
-    '--sparse',
-    '--bo-checkout',
-    tempDir
-  ]);
+  var repoUrl = arguments[0];
+  var packagePath = arguments[1];
+  var startTime = DateTime.now();
+  var cloneResult = await Process.run(
+      'git',
+      [
+        'clone',
+        '--depth',
+        '1',
+        '--filter=tree:0',
+        // Prevent using sparse for old git versions
+        // '--sparse',
+        '--no-checkout',
+        repoUrl,
+        tempDir,
+      ],
+      workingDirectory: tempDir);
 
-  var fetchResult = await Process.run('git', ['fetch', '-tag', '--quiet'],
+  var fetchResult = await Process.run('git', ['fetch', '--tag', '--quiet'],
       workingDirectory: tempDir);
   var listTagResult =
       await Process.run('git', ['tag', '--list'], workingDirectory: tempDir);
@@ -23,22 +29,34 @@ void main(List<String> arguments) async {
   var sparseInitResult = await Process.run('git', ['sparse-checkout', 'init'],
       workingDirectory: tempDir);
   var sparseSetResult = await Process.run(
-      'git', ['sparse-checkout', packagePath + '/pubspec.yaml'],
+      'git', ['sparse-checkout', 'set', packagePath + '/pubspec.yaml'],
       workingDirectory: tempDir);
 
-  List<List<String>> pubspecs = [];
+  var pubspecs = <List<String>>[];
+
+  stderr.writeln('Initialization completed, start looping through tags now.');
 
   for (var tagName in tags) {
+    stderr.writeln([
+      'Working at tag ',
+      tagName,
+      ' seconds passed: ',
+      DateTime.now().difference(startTime).inSeconds.toString()
+    ]);
     var checkoutResult = await Process.run('git', ['checkout', tagName],
         workingDirectory: tempDir);
-    var pubspec = await File(tempDir + '/' + packagePath + '/pubspec.yaml').readAsLines();
+    if (!await File(tempDir + '/' + packagePath + '/pubspec.yaml').exists()) {
+      continue;
+    }
+    var pubspec =
+        await File(tempDir + '/' + packagePath + '/pubspec.yaml').readAsLines();
     pubspecs.add(pubspec);
   }
-  for (var pubspec in pubspecs){
-      for (var line in pubspec){
-          if (line.contains('version')){
-              print(line);
-          }
+  for (var pubspec in pubspecs) {
+    for (var line in pubspec) {
+      if (line.contains('version')) {
+        print(line);
       }
+    }
   }
 }
